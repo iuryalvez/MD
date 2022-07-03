@@ -1,5 +1,7 @@
 # UFG-MD
-Repositório para códigos relacionados à disciplina de Matemática Discreta
+Repositório para códigos relacionados à disciplina de Matemática Discreta.
+
+Até agora, os seguintes códigos estão implementados:
 
 ## Teoria dos Números
 
