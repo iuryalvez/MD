@@ -38,4 +38,12 @@ void euclides_estendido(int a, int b);
 
 int maior_numero(int n1, int n2);
 
+int num_inverso(int n, int t);
+
+void resolve_equacoes();
+
+void tcr();
+
+void new_line();
+
 void end_msg();
