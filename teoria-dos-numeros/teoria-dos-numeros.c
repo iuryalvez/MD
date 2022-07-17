@@ -12,14 +12,15 @@ void clear_screen() {
 
 void menu() {
     printf("TEORIA DOS NÚMEROS\n");
-    printf("0 - SAIR\n");
-    printf("1 - CRIVO DE ERATÓSTENES\n");
-    printf("2 - MAIOR DIVISOR DE UM NÚMERO\n");
-    printf("3 - MAIOR DIVISOR COMUM ENTRE DOIS NÚMEROS\n");
-    printf("4 - ÁRVORE DE FATORES\n");
-    printf("5 - ALGORITMO DE EUCLIDES\n");
-    printf("6 - ALGORITMO DE EUCLIDES ESTENDIDO\n");
-    printf("99 - LIMPAR A TELA\n");
+    printf("0  ->  SAIR\n");
+    printf("1  ->  CRIVO DE ERATÓSTENES\n");
+    printf("2  ->  MAIOR DIVISOR DE UM NÚMERO\n");
+    printf("3  ->  MAIOR DIVISOR COMUM ENTRE DOIS NÚMEROS\n");
+    printf("4  ->  ÁRVORE DE FATORES\n");
+    printf("5  ->  ALGORITMO DE EUCLIDES\n");
+    printf("6  ->  ALGORITMO DE EUCLIDES ESTENDIDO\n");
+    printf("7  ->  RESOLVER EQUAÇÃO DO TIPO \"a ⊗ x = b em Zn\"\n");
+    printf("99 ->  LIMPAR A TELA\n");
 }
 
 void crivo_de_eratostenes(int n) {
@@ -47,12 +48,12 @@ int num_primo(int n) {
 int mdc_dois_numeros(int n1, int n2) {
     int i, mdc;
     int maior;
-    if (num_primo(n1) == TRUE) {
-        printf("O primeiro número é primo.\n");
-        if (num_primo(n2) == TRUE) printf("O segundo número é primo.\n");    
-        return FALSE;
-    }
-    if (num_primo(n2) == TRUE) printf("O segundo número é primo.\n"); // i deve ser diferente de n1 e n2 pq não sabemos se um dos dois números é fator do outro
+    // if (num_primo(n1) == TRUE) {
+    //     printf("O primeiro número é primo.\n");
+    //     if (num_primo(n2) == TRUE) printf("O segundo número é primo.\n");    
+    //     return FALSE;
+    // }
+    // if (num_primo(n2) == TRUE) printf("O segundo número é primo.\n"); // i deve ser diferente de n1 e n2 pq não sabemos se um dos dois números é fator do outro
     maior = maior_numero(n1,n2);
     for (i = 1; i <= maior/2; i++) if (n1 % i == 0 && n2 % i == 0 && (i != n1 || i != n2)) mdc = i; // verificação simultânea dos divisores, vai atualizar sempre que encontrar um número que divide os dois
     return mdc;
@@ -92,8 +93,9 @@ void arvore_de_fatores(int n) {
 void euclides(int a, int b) {
     int n1 = a, n2 = b; // armazenando os números originais para printar no final
     int r = a % b, q = a/b; // primeira linha -> r é o resto, q é o quociente de a por b
+    printf("|   n   |   a   |   q   |  r  |\n");
     while (1) {
-        printf("a: %5d | b: %5d | q: %2d | r: %2d\n", a, b, q, r); // printando primeiro pq vão ser atualizados daqui pra frente
+        printf("|%7d|%7d| %5d |%5d|\n", a, b, q, r); // printando primeiro pq vão ser atualizados daqui pra frente
         if (r == 0) { // condição de parada depois do printf pois imprimimos quando r é 0 também
             printf("mdc(%d,%d) = %d\n", n1, n2, b); // maior divisor comum entre os dois números, o b da última linha
             break;
@@ -139,7 +141,7 @@ void euclides_estendido(int n1, int n2) {
         i++;
     }
     i = 0;
-    printf("|iter.|    a    |    b    |  q  |   r   |   s   |   t   |\n"); // print formatado
+    printf("|iter.|    n    |    a    |  q  |   r   |   s   |   t   |\n"); // print formatado
     while (cont--) {
         printf("|%5d|%9d|%9d|%5d|%7d|%7d|%7d|\n", i,a[i],b[i],q[i],r[i],s[cont],t[cont]);
         i++;
@@ -152,11 +154,109 @@ void euclides_estendido(int n1, int n2) {
     free(t); // liberando memória utilizada
 }
 
+int t_euclides_estendido(int n1, int n2) {
+    int *a, *b, *r, *q; // utilizando vetores para armazenar e calcular s e t futuramente
+    int t_final;
+    a = (int *) malloc(sizeof(int)); // alocação padrão para armazenar UM int por enquanto
+    b = (int *) malloc(sizeof(int));
+    q = (int *) malloc(sizeof(int));
+    r = (int *) malloc(sizeof(int));
+    int cont = 0; // contador para ver quantas iterações há
+    a[0] = n1;
+    b[0] = n2;
+    q[0] = n1/n2;
+    r[0] = n1%n2;
+    while (1) { // executando euclides para saber quantas iterações há para armazenarmos s e t em um vetor e printar depois
+        cont++;
+        if (r[cont-1] == 0) break; // importante: ver se o ultimo resto já é o mdc
+        a = (int *) realloc(a,sizeof(int)*(cont+1)); // realocando memória para caber mais um elemento
+        a[cont] = b[cont-1]; // o novo a é o antigo b 
+        b = (int *) realloc(b,sizeof(int)*(cont+1));
+        b[cont] = r[cont-1]; // o novo b é o antigo resto
+        q = (int *) realloc(q,sizeof(int)*(cont+1));
+        q[cont] = a[cont]/b[cont]; // o novo quociente
+        r = (int *) realloc(r,sizeof(int)*(cont+1));
+        r[cont] = a[cont] % b[cont]; // o novo resto
+    }
+    int *s = (int *) malloc(cont*sizeof(int)); // alocação padrão para um int
+    int *t = (int *) malloc(cont*sizeof(int));
+    s[0] = 0; // início predefinido de s e t
+    t[0] = 1;
+    int i = 1;
+    while (i < cont) { // calcular s e t agora
+        s[i] = t[i-1]; // fórmula do novo s
+        t[i] = s[i-1] - (t[i-1]*q[cont-1-i]); // fórmula do novo t
+        i++;
+    }
+    t_final = t[i-1]; 
+    free(a);
+    free(b);
+    free(q);
+    free(r);
+    free(s);
+    free(t); // liberando memória utilizada
+    return t_final;
+}
+
+void resolve_equacoes() {
+    int a = 0, b = 0, x0, x, n = 0, mdc, t, i, inv;
+    while (n < 2) {
+        printf("Insira o número 'n': ");
+        scanf("%d", &n);
+        if (n < 2) printf("O número deve ser maior do que 1.\n");
+    }
+    while (a < 1 || a > n) {
+        printf("Insira o 'a': "); // a X x = b
+        scanf("%d", &a);
+        if (a < 1 || a > n) printf("O número deve ser maior do que 1 e menor do que 'n'.\n");
+    }
+    while (b < 1 || b > n) {
+        printf("Insira o 'b': "); // a X x = b
+        scanf("%d", &b);
+        if (b < 1 || b > n) printf("O número deve ser maior do que 1 e menor do que 'n'.\n");
+    }
+
+    mdc = mdc_dois_numeros(n,a); // mdc para calcular as outras soluções
+    if (mdc == 1) { // maior divisor comum igual a 1 significa que só existe uma solução
+        printf("A equação \"%d ⊗ x = %d em Z=%d\" só possui 1 solução: ", a, b, n); 
+        t = t_euclides_estendido(n,a);
+        // printf("t: %d\n", t);
+        inv = num_inverso(n,t);
+        // printf("inverso: %d\n", inv);
+        x0 = (b * inv) % n; // primeira solução
+        if (x0 < 0) x0 += n; // não pode ser negativo, é só somar o n
+        printf("%d", x0);
+    }
+    else if (b % mdc == 0) {
+        printf("A equação \"%d ⊗ x = %d em Z=%d\" possui %d soluções:\n", a, b, n, mdc);
+        t = t_euclides_estendido(n,a);
+        x0 = (t * (b/mdc)) % n;
+        if (x0 < 0) x0 += n;
+        // printf("x = (%d * %d) %% %d\n", b, inv, x0);
+        printf("%d", x0);
+        for (i = 1; i < mdc; i++) {
+            x = (x0 + i*(n/mdc)) % n; // fórmula para calcular outras soluções
+            if (x < 0) x += n; // não pode ser negativo
+            printf(", %d", x);
+        }
+    }
+    else printf("O mdc(n,a) não divide b, a equação não possui soluções");
+    printf("\n");
+}
+
+int num_inverso(int n, int t) {
+    if (t < 0) t += n;
+    int inv = t % n;
+    return inv;
+}
+
 int maior_numero (int n1, int n2) { // maior número entre dois números
-    int maior;
-    if (n1 > n2) maior = n1;
-    else maior = n2;
+    int maior = (n1 > n2) ? n1 : n2;
     return maior;
+}
+
+void new_line() {
+    printf("\n");
 }
 
 void end_msg() {
