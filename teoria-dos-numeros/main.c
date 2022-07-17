@@ -16,6 +16,7 @@ int main () {
         n2 = 0;
         switch (op) {
             case 1:
+                new_line();
                 printf("----- CRIVO DE ERATÓSTENES -----\n");
                 printf("O crivo de eratóstenes calcula todos os números primos até o limitante escolhido\n");
                 printf("Insira o número limite do crivo: ");
@@ -24,8 +25,10 @@ int main () {
                     if (n <= 1) printf("Por favor, insira um número válido (> 1)\n");
                 }                
                 crivo_de_eratostenes(n);
+                new_line();
                 break;
             case 2:
+                new_line();
                 printf("----- MAIOR DIVISOR DE UM NÚMERO -----\n");
                 printf("Insira o número para calcular seu MD: ");
                 while(n < 1) {
@@ -38,8 +41,10 @@ int main () {
                     if (num_primo(n)) printf("O número é primo. Insira um número válido\n");
                     printf("O maior divisor de %d é: %d\n", n, md);
                 }
+                new_line();
                 break;
             case 3:
+                new_line();
                 printf("----- MAIOR DIVISOR COMUM ENTRE DOIS NÚMEROS -----\n");
                 printf("Insira o 1º número para ser calculado o mdc: ");
                 while (n1 < 1 || num_primo(n1)) {
@@ -61,8 +66,10 @@ int main () {
                 }
                 mdc = mdc_dois_numeros(n1, n2);
                 printf("O maior divisor comum de %d e %d é: %d\n", n1, n2, mdc);
+                new_line();
                 break;
             case 4:
+                new_line();
                 printf("----- ÁRVORE DE FATORES -----\n");
                 printf("A árvore de fatores vai encontrar os mínimos múltiplos comuns para o número escolhido.\n");
                 printf("Insira o valor a ser calculado: ");
@@ -76,34 +83,45 @@ int main () {
                     if (num_primo(n)) printf("O número inserido é primo, insira outro número.\n");
                 }
                 arvore_de_fatores(n);
+                new_line();
                 break;
             case 5:
+                new_line();
                 printf("----- ALGORITMO DE EUCLIDES -----\n");
                 while (n1 < 2) {
-                    printf("Insira o número a: ");
+                    printf("Insira o número 'n' (Z): ");
                     scanf("%d", &n1);
                     if (n1 < 2) printf("O número deve ser maior do que 1.\n");
                 }
                 while (n2 < 1 || n2 > n1) {
-                    printf("Insira o número b: ");
+                    printf("Insira o número 'a': ");
                     scanf("%d", &n2);
                     if (n2 < 1 || n2 > n1) printf("O número deve ser maior do que 1 e menor do que 'a'.\n");
                 }
                 euclides(n1,n2);
+                new_line();
                 break;
             case 6:
+                new_line();
                 printf("----- ALGORITMO DE EUCLIDES ESTENDIDO -----\n");
                 while (n1 < 2) {
-                    printf("Insira o número a: ");
+                    printf("Insira o número 'n': ");
                     scanf("%d", &n1);
                     if (n1 < 2) printf("O número deve ser maior do que 1.\n");
                 }
                 while (n2 < 1 || n2 > n1) {
-                    printf("Insira o número b: ");
+                    printf("Insira o número 'a': ");
                     scanf("%d", &n2);
-                    if (n2 < 1 || n2 > n1) printf("O número deve ser maior do que 1 e menor do que 'a'.\n");
+                    if (n2 < 1 || n2 > n1) printf("O número deve ser maior do que 1 e menor do que 'n'.\n");
                 }
                 euclides_estendido(n1,n2);
+                new_line();
+                break;
+            case 7:
+                new_line();
+                printf("----- EQUAÇÕES (\"a ⊗ x = b em Zn\") -----\n");
+                resolve_equacoes();
+                new_line();
                 break;
             case 99:
                 clear_screen();
