@@ -2,18 +2,19 @@
 
 int main () {
     setlocale(LC_ALL, "Portuguese");
-
-    int op;
-    int n, n1, n2;
-    int md, mdc;
+    int i; // variável auxiliar
+    long int op; // variável que armazena o valor da operação do menu
+    long int n; // variável utilizada para armazenar um número n
+    long int nums[2]; // variável que armazena dois números long int
+    long int md, mdc; // md: maior divisor | mdc: maior divisor comum
     clear_screen();
 
     do {
         menu();
-        scanf("%d", &op);
+        scanf("%ld", &op);
         n = 0;
-        n1 = 0;
-        n2 = 0;
+        nums[0] = 0; // inicialização para entrar em whiles de scanf
+        nums[1] = 1; // inicialização para entrar em whiles de scanf
         switch (op) {
             case 1:
                 new_line();
@@ -21,7 +22,7 @@ int main () {
                 printf("O crivo de eratóstenes calcula todos os números primos até o limitante escolhido\n");
                 printf("Insira o número limite do crivo: ");
                 while(n <= 1) { // ler enquanto nao inserir numero valido
-                    scanf("%d", &n);
+                    scanf("%ld", &n);
                     if (n <= 1) printf("Por favor, insira um número válido (> 1)\n");
                 }                
                 crivo_de_eratostenes(n);
@@ -32,40 +33,33 @@ int main () {
                 printf("----- MAIOR DIVISOR DE UM NÚMERO -----\n");
                 printf("Insira o número para calcular seu MD: ");
                 while(n < 1) {
-                    scanf("%d", &n);
+                    scanf("%ld", &n);
                     if (n < 1) {
                         printf("Insira um número válido (>= 1)\n");
                         continue;
                     }
-                    md = MDC(n);
+                    md = MD(n);
                     if (num_primo(n)) printf("O número é primo. Insira um número válido\n");
-                    printf("O maior divisor de %d é: %d\n", n, md);
+                    printf("O maior divisor de %ld é: %ld\n", n, md);
                 }
                 new_line();
                 break;
             case 3:
                 new_line();
                 printf("----- MAIOR DIVISOR COMUM ENTRE DOIS NÚMEROS -----\n");
-                printf("Insira o 1º número para ser calculado o mdc: ");
-                while (n1 < 1 || num_primo(n1)) {
-                    scanf("%d", &n1);
-                    if (n1 < 1) {
-                        printf("Insira um número válido (> 0)\n");
-                        continue;
+                for (i = 0; i < 2; i++) {
+                    while (nums[i] < 2 || num_primo(nums[i])) {
+                        printf("Insira o %iº número para ser calculado o mdc: ", i);
+                        scanf("%ld", &nums[i]);
+                        if (nums[i] < 1) {
+                            printf("Insira um número válido (> 0)\n");
+                            continue;
+                        }
+                        if (num_primo(nums[i]) == TRUE) printf("O número é primo, insira outro número:\n");
                     }
-                    if (num_primo(n1) == TRUE) printf("O número é primo, insira outro número:\n");
                 }
-                printf("Insira o 2º número para ser calculado o mdc: ");
-                while (n2 < 1 || num_primo(n2)) {
-                    scanf("%d", &n2);
-                    if (n2 < 1) {
-                        printf("Insira um número válido (> 0)\n");
-                        continue;
-                    }
-                    if (num_primo(n2) == TRUE) printf("O número é primo, insira outro número\n");
-                }
-                mdc = mdc_dois_numeros(n1, n2);
-                printf("O maior divisor comum de %d e %d é: %d\n", n1, n2, mdc);
+                mdc = mdc_dois_numeros(nums[0], nums[1]);
+                printf("O maior divisor comum de %ld e %ld é: %ld\n", nums[0], nums[1], mdc);
                 new_line();
                 break;
             case 4:
@@ -75,7 +69,7 @@ int main () {
                 printf("Insira o valor a ser calculado: ");
 
                 while (n <= 1 || num_primo(n)) {
-                    scanf("%d", &n);
+                    scanf("%ld", &n);
                     if (n <= 1) {
                         printf("Insira um número válido (> 1)\n");
                         continue;
@@ -88,39 +82,51 @@ int main () {
             case 5:
                 new_line();
                 printf("----- ALGORITMO DE EUCLIDES -----\n");
-                while (n1 < 2) {
-                    printf("Insira o número 'n' (Z): ");
-                    scanf("%d", &n1);
-                    if (n1 < 2) printf("O número deve ser maior do que 1.\n");
-                }
-                while (n2 < 1 || n2 > n1) {
-                    printf("Insira o número 'a': ");
-                    scanf("%d", &n2);
-                    if (n2 < 1 || n2 > n1) printf("O número deve ser maior do que 1 e menor do que 'a'.\n");
-                }
-                euclides(n1,n2);
+                for (i = 0; i < 2; i++) {
+                    while (nums[i] <= 2) {
+                        if (i < 1) printf("Insira o número 'n' (Z): "); 
+                        else printf("Insira o número 'a': ");
+                        scanf("%ld", &nums[i]);
+                        if (nums[0] <= 2) printf("O número 'n' deve ser maior do que 2.\n");
+                        if (i == 1) {
+                            if (nums[1] <= 1) printf("O número 'a' deve ser maior que 1\n");
+                            else if (nums[1] >= nums[0]) printf("O número 'a' deve ser menor que o número 'n'\n");
+                            else if (nums[1] == 2) break;
+                        }
+                    }
+                }       
+                euclides(nums[0],nums[1]);
                 new_line();
                 break;
             case 6:
                 new_line();
                 printf("----- ALGORITMO DE EUCLIDES ESTENDIDO -----\n");
-                while (n1 < 2) {
-                    printf("Insira o número 'n': ");
-                    scanf("%d", &n1);
-                    if (n1 < 2) printf("O número deve ser maior do que 1.\n");
+                for (i = 0; i < 2; i++) {
+                    while (nums[i] <= 2) {
+                        if (i < 1) printf("Insira o número 'n' (Z): "); 
+                        else printf("Insira o número 'a': ");
+                        scanf("%ld", &nums[i]);
+                        if (nums[0] <= 2) printf("O número 'n' deve ser maior do que 2.\n");
+                        if (i == 1) {
+                            if (nums[1] <= 1) printf("O número 'a' deve ser maior que 1\n");
+                            else if (nums[1] >= nums[0]) printf("O número 'a' deve ser menor que o número 'n'\n");
+                            else if (nums[1] == 2) break;
+                        }
+                    }
                 }
-                while (n2 < 1 || n2 > n1) {
-                    printf("Insira o número 'a': ");
-                    scanf("%d", &n2);
-                    if (n2 < 1 || n2 > n1) printf("O número deve ser maior do que 1 e menor do que 'n'.\n");
-                }
-                euclides_estendido(n1,n2);
+                euclides_estendido(nums[0],nums[1]);
                 new_line();
                 break;
             case 7:
                 new_line();
-                printf("----- EQUAÇÕES (\"a ⊗ x = b em Zn\") -----\n");
-                resolve_equacoes();
+                printf("----- EQUAÇÕES LINEARES MODULARES (\"a⊗ x = b em Zn\") -----\n");
+                equacoes_lineares();
+                new_line();
+                break;
+            case 8:
+                new_line();
+                printf("----- RESOLUÇÃO DE SISTEMAS (TEOREMA CHINÊS DO RESTO) -----\n");
+                tcr();
                 new_line();
                 break;
             case 99:
