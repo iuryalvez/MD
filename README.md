@@ -3,6 +3,7 @@ Repositório para códigos relacionados à disciplina de Matemática Discreta.
 
 ## Teoria dos Números
 
+### Funções
   1. [**Crivo de Eratóstenes**](https://pt.wikipedia.org/wiki/Crivo_de_Eratóstenes)
   
       Encontra e imprime valores primos até um certo valor limite.
@@ -38,3 +39,15 @@ Repositório para códigos relacionados à disciplina de Matemática Discreta.
       "xi ≡ ai mod mi" Leia: "ai = x mod mi"
       
       Dado o número "i" de sistemas, os i números 'a' e i números 'm', exibe a solução x0 dos sistemas utilizando o teorema chinês do resto.
+
+### Compilando e executando:
+
+  Utilizando o gcc:
+
+```
+gcc -c teoria-dos-numeros.c -o teoria-dos-numeros.o
+  
+gcc teoria-dos-numeros.o main.c -o teoria-dos-numeros.exe
+
+./teoria-dos-numeros.exe
+```
