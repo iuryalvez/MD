@@ -1,11 +1,16 @@
 #include "criptografia.h"
 
+void menu () {
+    printf("CRIPTOGRAFIA\n");
+    printf("1 -> RSA\n");
+}
+
 lli maior_potencia(lli expoente, lli maior_pot) {
     if(pow(2,maior_pot+1) > expoente) return maior_pot;
     else return maior_potencia(expoente,maior_pot+1);
 }
 
-lli encriptar(lli p, lli q, lli e, lli m) {
+lli encriptar_RSA(lli p, lli q, lli e, lli m) {
 
     lli *resultados; // vetor de resultados
     lli n = p * q; // n de Zn
