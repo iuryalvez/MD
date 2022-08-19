@@ -42,12 +42,25 @@ Repositório para códigos relacionados à disciplina de Matemática Discreta.
 
 ### Compilando e executando:
 
-  Utilizando o gcc:
+  Utilizando o gcc dentro da pasta de teoria dos números:
 
-```
-gcc -c teoria-dos-numeros.c -o teoria-dos-numeros.o
-  
-gcc teoria-dos-numeros.o main.c -o teoria-dos-numeros.exe
+```  
+gcc teoria-dos-numeros.c main.c -o teoria-dos-numeros.exe
 
 ./teoria-dos-numeros.exe
+```
+## Criptografia
+
+### Funções
+  1. **Descobrindo chave pública (RSA)**
+  2. **Descobrindo chave privada (RSA)**
+
+### Compilando e executando:
+
+  Utilizando o gcc dentro da pasta de criptografia:
+
+```  
+gcc criptografia.c main.c -o criptografia.exe
+
+./criptografia.exe
 ```
