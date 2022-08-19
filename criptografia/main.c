@@ -3,6 +3,11 @@
 /*
 gcc criptografia.c main.c -o criptografia.exe -lm
 ./criptografia.exe
+
+
+37 43 445
+2491 255
+1492
 */
 
 int main() {
@@ -11,6 +16,8 @@ int main() {
     private_key Apvt, Bpvt; // chaves privadas de Ana e Beto
     public_key A, B; // chaves públicas de Ana e Beto
     lli phi; // phi(n) = (p-1)*(q-1)
+
+    lli M; // mensagem que será encriptada
  
     do {
         menu();
@@ -42,6 +49,15 @@ int main() {
                 break;
             case 3:
                 printf("\nRSA - Encriptar\n");
+                printf("Chave privada de Ana: (p,q,d)\n");
+                scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
+                printf("Informe a mensagem que sera encriptada: (M)\n");
+                scanf("%lld", &M);
+                printf("Encontrando o e da chave pública de Ana:\n");
+                phi = (Apvt.p-1)*(Apvt.q-1);
+                A.e = inverter(phi,Apvt.d); // Temos que encontrar o e da Ana pra poder encriptar
+                printf("Usando p=%lld, q=%lld, e=%lld para encriptar %lld:\n", Apvt.p, Apvt.q, A.e, M);
+                encriptar_RSA(Apvt.p, Apvt.q, A.e, M);
                 break;
             case 4:
                 printf("\nRSA - Desencriptar\n");
