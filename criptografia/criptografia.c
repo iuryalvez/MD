@@ -127,18 +127,21 @@ lli encriptar_RSA(lli p, lli q, lli e, lli m) {
     for (i = 0; i < maior_pot; i++) printf("\t[%lld^%.0lf]: %lld\n", m, pow(2,i+1), resultados[i]);
     printf("\n");
 
-    printf("%lld^%lld = ", m, e); // printando o valor que quero encontrar
+    printf("%lld^%lld =\n", m, e); // printando o valor que quero encontrar
 
     i = maior_pot-1; // i recebe a maior potencia-1 porque uma posição no vetor começa com 0
     ant = 1; // A variável começa com 1 para ser multiplicado pelo resultado na posição i do vetor
 
-    while(expo>0){
-        printf("%lld * \n", resultados[i]); // Começo a lista dos valores que deverão ser multiplicados para se ter m^e
+    while(expo>1){
+        printf("%lld^%lld = %lld\n", m, i+1, resultados[i]); // Começo a lista dos valores que deverão ser multiplicados para se ter m^e
         ant = ant * resultados[i];
         expo = expo - pow(2, i+1); // ajusta o expoente ao próximo na lista de fatoração, que está na posição i+1
+        i = 1;
         i = maior_potencia(expo, i); // encontra a próxima maior potência de 2 antes do expoente atual
-        printf("expo = %lld i = %lld\n", expo, i);
+        i--;
     }
+
+    printf("\nant = %lld\n", ant);
 
 
 
