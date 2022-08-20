@@ -12,11 +12,9 @@ gcc criptografia.c main.c -o criptografia.exe -lm
 
 int main() {
 
-    int op; // variável operador
+    int op, opc; // variável operador
     private_key Apvt, Bpvt; // chaves privadas de Ana e Beto
     public_key A, B; // chaves públicas de Ana e Beto
-    lli phi; // phi(n) = (p-1)*(q-1)
-
     lli M; // mensagem que será encriptada
  
     do {
@@ -24,35 +22,45 @@ int main() {
         scanf("%d", &op);
         
         // fazer as variáveis receberem números inválidos para entrar no loop de scanf
-        
+        opc = 0;
         switch (op) {
             case 1:
                 printf("\nRSA - Descobrir chave publica\n");
-                printf("Chave privada de Ana: (p,q,d)\n"); // ler 3 números seguidos
+                printf("Chave privada de 'A': (p,q,d)\n"); // ler 3 números seguidos
                 scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
                 A = chave_publica(Apvt);
                 printf("\tO inverso de 'd' eh '%lld' que eh o 'e' que queriamos.\n", A.e);
-                printf("\tChave publica de Ana = (n,e) = (%lld,%lld)\n\n", A.n, A.e);
+                printf("\tA chave publica de 'A' eh = (n,e) = (%lld,%lld)\n\n", A.n, A.e);
                 break;
             case 2: 
                 printf("\nRSA - Descobrir chave privada\n");
-                printf("Chave publica de Beto: (n,e)\n"); // ler 2 números seguidos
+                printf("Chave publica de 'B': (n,e)\n"); // ler 2 números seguidos
                 scanf("%lld %lld", &B.n, &B.e);
                 Bpvt = chave_privada(B); // passar o n de Beto, será fatorado e vamos descobrir o p e o q
                 printf("\tO inverso de 'e' eh '%lld' que eh o 'd' que queriamos.\n", Bpvt.d);
-                printf("\tChave privada de Beto: (p,q,d) = (%lld,%lld,%lld)\n\n", Bpvt.p, Bpvt.q, Bpvt.d);
+                printf("\tA chave privada de 'B' eh = (p,q,d) = (%lld,%lld,%lld)\n\n", Bpvt.p, Bpvt.q, Bpvt.d);
                 break;
             case 3:
                 printf("\nRSA - Encriptar\n");
-                printf("Chave privada de Ana: (p,q,d)\n");
-                scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
+                while (opc < 1 || opc > 2) {
+                    printf("1 - Utilizar chave privada (p,q,d)\n");
+                    printf("2 - Utilizar chave publica (n,e)\n");
+                    scanf("%d", &opc);
+                    if (opc < 1 || opc > 2) printf("Operacao invalida!\n");
+                }
                 printf("Informe a mensagem que sera encriptada: (M)\n");
                 scanf("%lld", &M);
-                printf("\tPara encontrar o e da chave pública de Ana: ");
-                phi = (Apvt.p-1)*(Apvt.q-1);
-                A.e = inverter(phi,Apvt.d); // Temos que encontrar o e da Ana pra poder encriptar
-                printf("\n\tUsando p=%lld, q=%lld, e=%lld para encriptar %lld:\n", Apvt.p, Apvt.q, A.e, M);
-                encriptar_RSA(Apvt.p, Apvt.q, A.e, M);
+                if (opc == 1) { // se for privada, precisamos calcular a chave pública
+                    printf("Chave privada de 'A': (p,q,d)\n");
+                    scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
+                    A = chave_publica(Apvt);
+                } else { // se for pública, basta calcularmos a encriptação
+                    printf("Chave publica de 'A': (n,e)\n");
+                    scanf("%lld %lld", &A.n, &A.e);
+                }
+                printf("\n\tUsando (n,e) = (%lld,%lld) para encriptar %lld:\n", A.n, A.e, M);
+                M = encriptar_RSA(A, M);
+                printf("\tA mensagem encriptada de 'A' eh: %lld\n\n", M);
                 break;
             case 4:
                 printf("\nRSA - Desencriptar\n");
