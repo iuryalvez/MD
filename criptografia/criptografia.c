@@ -74,17 +74,28 @@ lli num_inverso(lli n, lli t) {
 }
 
 lli inverter(lli phi, lli num) {
-    printf("\n\tPrecisamos calcular o t de %lld em Z%lld\n\n", num, phi);
+    printf("\n\tPrecisamos calcular o t de %lld em Zphi(n)=%lld\n\n", num, phi);
     lli t = t_euclides_estendido(phi,num);
     printf("\n\tO t é %lld\n", t);
-    printf("\te^-1 = t mod phi(n)\n");
+    printf("\tInverso = t mod phi(n)\n");
     lli inv = num_inverso(phi,t);
-    printf("\tO inverso eh '%lld'\n", inv);
     return inv;
 }
 
+public_key chave_publica(private_key Apvt) {
+    public_key T; // chave pública Temporária
+    printf("\tTendo p e q, podemos calcular o phi(n): ");
+    lli phi = (Apvt.p-1)*(Apvt.q-1);
+    printf("%lld\n", phi);
+    printf("\tCom o phi(n), descobrimos o 'e', já que 'e' é o inverso de 'd' em phi(n)\n");
+    T.e = inverter(phi,Apvt.d); // encontrar o inverso de d em phi(n)
+    T.n = Apvt.p*Apvt.q;
+    printf("\tE(M) = M^%lld mod %lld\n", T.e, T.n);
+    return T;
+}
+
 private_key chave_privada(public_key B) {
-    private_key T;
+    private_key T; // chave privada Temporária
     T.p = 2;
     printf("\n\tPrecisamos achar os numeros p e q que resultam em %lld\n", B.n);
     while ((double)B.n/T.p != B.n/T.p) T.p++; // verificando se o número p é inteiro, se for, vai parar
@@ -93,7 +104,7 @@ private_key chave_privada(public_key B) {
     printf("\tTendo p e q, podemos calcular o phi(n): ");
     lli phi = (T.p-1)*(T.q-1);
     printf("%lld\n", phi);
-    printf("\tCom o phi(n), descobrimos o d, já que d é o inverso de e em phi(n)\n");
+    printf("\tCom o phi(n), descobrimos o 'd', já que 'd' é o inverso de 'e' em phi(n)\n");
     T.d = inverter(phi,B.e);
     return T;
 }
@@ -112,7 +123,7 @@ lli encriptar_RSA(lli p, lli q, lli e, lli m) {
     lli i; // variável auxiliar
     lli ant; // armazena o valor de um valor anterior
 
-    maior_pot = maior_potencia(expo, maior_pot);
+    maior_pot = maior_potencia(expo, maior_pot); // recebe a maior potência de 2 mais próxima do expoente
 
     resultados = (lli *) calloc(sizeof(lli),maior_pot);
 
@@ -123,51 +134,33 @@ lli encriptar_RSA(lli p, lli q, lli e, lli m) {
         ant = resultados[i]; // atualizando para calcular o próximo com base no novo anterior
     }
     
-    printf("VETOR DE RESULTADOS:\n"); // print apenas para verificar os valores
+    printf("\n\tVetor de resultados:\n"); // print apenas para verificar os valores
     for (i = 0; i < maior_pot; i++) printf("\t[%lld^%.0lf]: %lld\n", m, pow(2,i+1), resultados[i]);
     printf("\n");
 
-    printf("%lld^%lld =\n", m, e); // printando o valor que quero encontrar
+    printf("\t%lld^%lld = ", m, e); // printando o valor que quero encontrar
 
     i = maior_pot-1; // i recebe a maior potencia-1 porque uma posição no vetor começa com 0
     ant = 1; // A variável começa com 1 para ser multiplicado pelo resultado na posição i do vetor
 
     while(expo>1){
-        printf("%lld^%lld = %lld\n", m, i+1, resultados[i]); // Começo a lista dos valores que deverão ser multiplicados para se ter m^e
-        printf("ant * resultado[i] mod n = %lld * %lld mod %lld\n", ant, resultados[i], n);
-        ant = ant * resultados[i] % n;
-        printf("ant = %lld\n", ant);
+        // printf("\t%lld^%.0lf = %lld\n", m, pow(2,i+1), resultados[i]); // Começo a lista dos valores que deverão ser multiplicados para se ter m^e
+        // printf("ant * resultado[i] mod n = %lld * %lld mod %lld\n", ant, resultados[i], n);
+        if (ant == 1) printf("%lld", resultados[i]); // se for o primeiro, printamos sem o ⊗
+        else printf("⊗ %lld", resultados[i]);
+        ant = ant * resultados[i] % n; // ant recebe os valores acumulados dos resultados válidos
+        // printf("ant = %lld\n", ant);
         expo = expo - pow(2, i+1); // ajusta o expoente ao próximo na lista de fatoração, que está na posição i+1
         i = 1;
         i = maior_potencia(expo, i); // encontra a próxima maior potência de 2 antes do expoente atual
-        i--;
+        i--; // i deve ser diminuído porque representa uma posição do vetor
     }
 
-    if(e%2!=0){
+    if(e % 2 != 0) {
+        printf("⊗ %lld", m);
         ant = ant*m % n;
     }
-    printf("\nant = %lld\n", ant);
-
-
-
-    /*
-    i = maior_pot-1; // i recebe a maior potencia-1 porque uma posição no vetor começa com 0
-    ant = resultados[i] % n; // primeiro valor a ser somado para descobrir a mensagem encriptada
-    expo = expo-pow(2,i); // atualizando o expoente (quando for reduzido a 0 é porque acabou)
-
-    printf("%lld^%lld = ", m, e); // printando o valor que quero encontrar
-    printf("%lld^%lf ", m, pow(2,i)); // printando o valor de m elevado a uma potência próxima mais a outra...
-
-    while(expo!=0){
-        i = 1;
-        i = maior_potencia(expo, i); // i recebe a maior potência do novo expoente
-        ant = (ant * resultados[i]) % n; // ant recebe os valores acumulados dos resultados válidos
-        expo = expo-pow(2,i); // atualizando o expoente para o próximo cálculo
-        
-        //printf("+%% %lld^%lf", m, pow(2,i));
-        if (expo == 0) printf("\n");
-    }
-    */
+    printf("\n\t%lld^%lld = %lld\n\n", m, e, ant);
 
     return ant;
 }

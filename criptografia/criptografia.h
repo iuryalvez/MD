@@ -26,6 +26,8 @@ void menu();
 
 private_key chave_privada(public_key B);
 
+public_key chave_publica(private_key A);
+
 lli t_euclides_estendido(lli n1, lli n2);
 
 lli num_inverso(lli n, lli t);
