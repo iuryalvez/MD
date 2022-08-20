@@ -134,13 +134,18 @@ lli encriptar_RSA(lli p, lli q, lli e, lli m) {
 
     while(expo>1){
         printf("%lld^%lld = %lld\n", m, i+1, resultados[i]); // Começo a lista dos valores que deverão ser multiplicados para se ter m^e
+        printf("ant * resultado[i] mod n = %lld * %lld mod %lld\n", ant, resultados[i], n);
         ant = ant * resultados[i] % n;
+        printf("ant = %lld\n", ant);
         expo = expo - pow(2, i+1); // ajusta o expoente ao próximo na lista de fatoração, que está na posição i+1
         i = 1;
         i = maior_potencia(expo, i); // encontra a próxima maior potência de 2 antes do expoente atual
         i--;
     }
 
+    if(e%2!=0){
+        ant = ant*m % n;
+    }
     printf("\nant = %lld\n", ant);
 
 
