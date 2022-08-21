@@ -41,29 +41,23 @@ int main() {
                 printf("\tA chave privada de 'B' eh = (p,q,d) = (%lld,%lld,%lld)\n\n", Bpvt.p, Bpvt.q, Bpvt.d);
                 break;
             case 3:
-                printf("\nRSA - Encriptar\n");
-                while (opc < 1 || opc > 2) {
-                    printf("1 - Utilizar chave privada (p,q,d)\n");
-                    printf("2 - Utilizar chave publica (n,e)\n");
-                    scanf("%d", &opc);
-                    if (opc < 1 || opc > 2) printf("Operacao invalida!\n");
-                }
+                printf("\nRSA - Encriptar mensagem de 'A' para 'B'\n");
+                printf("Chave publica de 'B': (n,e)\n");
+                scanf("%lld %lld", &B.n, &B.e);
                 printf("Informe a mensagem que sera encriptada: (M)\n");
                 scanf("%lld", &M);
-                if (opc == 1) { // se for privada, precisamos calcular a chave pública
-                    printf("Chave privada de 'A': (p,q,d)\n");
-                    scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
-                    A = chave_publica(Apvt);
-                } else { // se for pública, basta calcularmos a encriptação
-                    printf("Chave publica de 'A': (n,e)\n");
-                    scanf("%lld %lld", &A.n, &A.e);
-                }
-                printf("\n\tUsando (n,e) = (%lld,%lld) para encriptar %lld:\n", A.n, A.e, M);
-                M = encriptar_RSA(A, M);
-                printf("\tA mensagem encriptada de 'A' eh: %lld\n\n", M);
+                printf("\n\tUsando (n,e) = (%lld,%lld) para encriptar %lld:\n", B.n, B.e, M);
+                M = encriptar_RSA(B, M);
+                printf("\tA mensagem encriptada de 'A' para 'B' eh: %lld\n\n", M);
                 break;
             case 4:
-                printf("\nRSA - Desencriptar\n");
+                printf("\nRSA - Desencriptar mensagem de 'B' para 'A'\n");
+                printf("Chave privada de 'A': (p,q,d)\n");
+                scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
+                printf("Mensagem que sera desencriptada:\n");
+                scanf("%lld", &M);
+                M = desencriptar_RSA(Apvt, M);
+                printf("\tA mensagem desencriptada eh: %lld\n", M);
                 break;
             default:
                 if (op != 0) printf("Operacao invalida!\n");

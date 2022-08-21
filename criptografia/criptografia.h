@@ -86,6 +86,7 @@ lli inverter(lli phi, lli num);
  */
 lli maior_potencia(lli expoente, lli pot);
 
+
 /**
  * @brief função que encripta uma mensagem 'm' com base em uma chave pública 'A'
  * 
@@ -94,3 +95,41 @@ lli maior_potencia(lli expoente, lli pot);
  * @return lli, long long int, mensagem encriptada 
  */
 lli encriptar_RSA(public_key A, lli m);
+
+/**
+ * @brief função que desencripta a mensagem m com chave privada Apvt
+ * 
+ * @param Apvt chave privada
+ * @param m mensagem encriptada
+ * @return lli mensagem desencriptada
+ */
+lli desencriptar_RSA (private_key Apvt, lli N);
+
+/**
+ * @brief função que calcula o vetor de resultados das potências em Zn (M^e mod n) para encriptar ou desencriptar
+ * 
+ * @param n o n que fazemos o resto da divisão "mod n"
+ * @param tam tamanho do vetor de resultados, é o valor da potência de base 2 mais próxima do 'e' da chave pública
+ * @param m a BASE M (M^e mod n) 
+ * @return lli* retorna o vetor de resultados em N
+ */
+lli *resultados_N(lli n, lli tam, lli m);
+
+/**
+ * @brief função que calcula as multiplicações modulares dos resultados válidos em Zn (M^e mod n)
+ * 
+ * @param n o valor Zn (mod n)
+ * @param e o valor do expoente que somamos até chegar nele
+ * @param resultados o vetor de resultados para sabermos os resultados válidos
+ * @param m a BASE M (M^e mod n)
+ * @return lli o resultado das multiplicações
+ */
+lli multiplicacoes_modulares(lli n, lli e, lli *resultados, lli m);
+
+/**
+ * @brief printa as somas das potências necessárias para chegarmos em 'e'
+ * 
+ * @param A chave pública A para sabermos o 'n' e o 'e'
+ * @param m mensagem (M^e)
+ */
+void print_potencias_validas(public_key A, lli m);

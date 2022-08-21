@@ -114,65 +114,112 @@ lli maior_potencia(lli expoente, lli maior_pot) {
     else return maior_potencia(expoente,maior_pot+1); // o expoente é o 'e' de M^e mod n
 }
 
-lli encriptar_RSA(public_key A, lli m) {
-    lli *resultados; // vetor de resultados
-    lli expo = A.e; // expoente temporário para atualizar e calcular a encriptação da mensagem
-    lli maior_pot = 1; // potência de dois mais próxima do expoente temporário
-    lli i; // variável auxiliar
-    lli ant; // armazena o valor de um valor anterior
-
-    printf("\tPrecisamos calcular E(M) = M^e mod n\n"); // fórmula de encriptação
-    printf("\tIsto eh %lld^%lld mod %lld\n", m, A.e, A.n);
-    printf("\t%lld^%lld mod %lld eh o mesmo que: ", m, A.e, A.n);
-    while(expo>1){
-        i = 1;
-        i = maior_potencia(expo, i); // encontra a próxima maior potência de 2 antes do expoente atual
-        if (expo == A.e) printf("%lld^%.0lf", m, pow(2,i)); // se for o primeiro, printamos sem o ⊗
-        else printf("⊗ %lld^%.0lf", m, pow(2,i));
-        expo = expo - pow(2, i); // ajusta o expoente ao próximo na lista de fatoração
-    }
-    if(A.e % 2 != 0) printf("⊗ %lld^1", m);
-    printf("\n");
-
-    expo = A.e; // redefinindo expo
-    maior_pot = maior_potencia(expo, maior_pot); // recebe a maior potência de 2 mais próxima do expoente
-
-    resultados = (lli *) calloc(sizeof(lli),maior_pot);
-
-    ant = m; // valor m
+lli * resultados_N(lli n, lli tam, lli m) {
+    lli *resultados = calloc(sizeof(lli),tam); // criando o vetor de resultados para ser retornado no final da função
+    lli i; // variável auxiliar para percorrer o vetor
+    lli ant = m; // ant vale m antes de chamar essa função, devemos armazenar esse valor para os printfs
     // o i vai percorrer o vetor de resultados e preenchê-lo com valores válidos
-    for(i = 0; i < maior_pot; i++){
-        resultados[i] = (ant*ant) % A.n; // dando valor para cada posição do vetor de resultados
+    for(i = 0; i < tam; i++){
+        resultados[i] = (ant*ant) % n; // dando valor para cada posição do vetor de resultados
         ant = resultados[i]; // atualizando para calcular o próximo com base no novo anterior
     }
     
     printf("\n\tVetor de resultados:\n"); // print apenas para verificar os valores
-    for (i = 0; i < maior_pot; i++) printf("\t[%lld^%.0lf]: %lld\n", m, pow(2,i+1), resultados[i]);
+    for (i = 0; i < tam; i++) printf("\t[%lld^%.0lf]: %lld\n", m, pow(2,i+1), resultados[i]);
     printf("\n");
 
-    printf("\t%lld^%lld = ", m, A.e); // printando o valor que quero encontrar
+    return resultados;
+}
 
-    i = maior_pot-1; // i recebe a maior potencia-1 porque uma posição no vetor começa com 0
-    ant = 1; // A variável começa com 1 para ser multiplicado pelo resultado na posição i do vetor
+void print_potencias_validas(public_key A, lli m) {
+    lli e_limite = A.e; // e_limite é o expoente temporário para calcular quais potencias são válidas
+    lli i;
+    printf("\t%lld^%lld mod %lld eh o mesmo que: ", m, A.e, A.n);
+    while(e_limite>1){
+        i = 1;
+        i = maior_potencia(e_limite, i); // encontra a próxima maior potência de 2 antes do expoente atual
+        if (e_limite == A.e) printf("%lld^%.0lf", m, pow(2,i)); // se for o primeiro, printamos sem o ⊗
+        else printf("⊗ %lld^%.0lf", m, pow(2,i));
+        e_limite = e_limite - pow(2, i); // ajusta o expoente ao próximo na lista de fatoração
+    }
+    if(A.e % 2 != 0) printf("⊗ %lld^1", m);
+    printf("\n");
+}
 
-    while(expo>1){
-        // printf("\t%lld^%.0lf = %lld\n", m, pow(2,i+1), resultados[i]); // Começo a lista dos valores que deverão ser multiplicados para se ter m^e
-        // printf("ant * resultado[i] mod n = %lld * %lld mod %lld\n", ant, resultados[i], n);
+lli multiplicacoes_modulares(lli n, lli e, lli *resultados, lli m) {
+    lli e_limite = e; // expoente temporário que indica o limite das potencias
+    lli ant = 1; // variável que armazena o valor anterior
+    lli i; // auxiliar que calculará as maiores potências
+
+    printf("\t%lld^%lld = ", m, e); // printando o valor que quero encontrar
+    while(e_limite>1){
+        i = 1; // atualizando i para somarmos ele e encontrar a nova maior potência
+        i = maior_potencia(e_limite, i); // encontra a próxima maior potência de 2 antes do expoente atual
+        i--; // o vetor é do tamanho da verdadeira maior potência, então para acessar a ultima posição devemos diminuir em 1
+        // começamos a multiplicação dos valores válidos que deverão ser multiplicados para se ter m^e
         if (ant == 1) printf("%lld", resultados[i]); // se for o primeiro, printamos sem o ⊗
         else printf("⊗ %lld", resultados[i]);
-        ant = (ant * resultados[i]) % A.n; // ant recebe os valores acumulados dos resultados válidos
+        ant = (ant * resultados[i]) % n; // ant recebe os valores acumulados dos resultados válidos
         // printf("ant = %lld\n", ant);
-        expo = expo - pow(2, i+1); // ajusta o expoente ao próximo na lista de fatoração, que está na posição i+1
-        i = 1;
-        i = maior_potencia(expo, i); // encontra a próxima maior potência de 2 antes do expoente atual
-        i--; // i deve ser diminuído porque representa uma posição do vetor
+        e_limite = e_limite - pow(2, i+1); // ajusta o expoente ao próximo na lista de fatoração, +1 porque diminuímos 1 antes
     }
-
-    if(A.e % 2 != 0) {
+    if(e % 2 != 0) { // se for ímpar, devemos executar o caso de multiplicar por M^1
         printf("⊗ %lld", m);
-        ant = (ant*m) % A.n;
+        ant = (ant*m) % n;
     }
-    printf("\n\t%lld^%lld = %lld\n\n", m, A.e, ant);
-
+    printf("\n\t%lld^%lld = %lld\n\n", m, e, ant); // valor das multiplicações
     return ant;
+}
+
+lli encriptar_RSA(public_key A, lli m) {
+    lli *resultados; // vetor de resultados
+    lli maior_pot = 1; // potência de dois mais próxima do expoente temporário, também é o tamanho do nosso vetor de resultados
+    lli res;
+
+    printf("\tPrecisamos calcular E(M) = M^e mod n\n"); // fórmula de encriptação
+    printf("\tIsto eh %lld^%lld mod %lld\n", m, A.e, A.n);
+    
+    print_potencias_validas(A,m);
+
+    maior_pot = maior_potencia(A.e, maior_pot); // recebe a maior potência de 2 mais próxima do expoente
+
+    resultados = resultados_N(A.n, maior_pot, m); // calculando o vetor de potências
+
+    res = multiplicacoes_modulares(A.n,A.e,resultados,m); // calculando o valor das multiplicações modulares das potências válidas
+
+    return res;
+}
+
+lli desencriptar_RSA (private_key Apvt, lli N) {
+    
+    lli n = Apvt.p * Apvt.q;
+    lli msg;
+
+    printf("\n\tD(N) = N^d mod n, ou seja -> D(%lld) = %lld^%lld mod %lld\n", N, N, Apvt.d, N);
+    printf("\tDevemos calcular\n");
+    printf("\t1 - (N mod p)^(d mod p-1) mod p -> (%lld mod %lld)^(%lld mod %lld) mod %lld\n", N, Apvt.p, Apvt.d, Apvt.p-1, Apvt.p);
+    printf("\t2 - (N mod q)^(d mod q-1) mod q -> (%lld mod %lld)^(%lld mod %lld) mod %lld\n", N, Apvt.q, Apvt.d, Apvt.q-1, Apvt.q);
+    
+    lli n1 = N % Apvt.p; // n da equação 1
+    lli e1 = Apvt.d % (Apvt.p-1); // expoente da equação 1
+    lli n2 = N % Apvt.q; // n da equacao 2
+    lli e2 = Apvt.d % (Apvt.q-1);  // expoente da equação 2
+
+    printf("\tResolvendo os mod...\n");
+    printf("\t1 - (%lld)^%lld mod %lld\n", n1, e1, Apvt.p);
+    printf("\t2 - (%lld)^%lld mod %lld\n", n2, e2, Apvt.q);
+    printf("\tAgora precisamos calcular o valor dessas potências\n");
+    
+    printf("\tPara equacao 1:\n");
+    lli *r1 = resultados_N(Apvt.p,maior_potencia(e1,1),n1); // vetor de resultados de 1
+    lli v1 = multiplicacoes_modulares(Apvt.p,e1,r1,n1); // retornar o valor das mult.
+
+    printf("\tPara equacao 2:\n");
+    lli *r2 = resultados_N(Apvt.q,maior_potencia(e2,1),n2); // vetor de resultados de 2
+    lli v2 = multiplicacoes_modulares(Apvt.q,e2,r2,n2); // retornar o valor das mult.
+
+    printf("\tAgora precisamos resolver o sistema de equacoes lineares modulares:\n");
+    // continuar com TCR...
+
+    return msg;
 }
