@@ -57,7 +57,7 @@ int main() {
                 printf("Mensagem que sera desencriptada:\n");
                 scanf("%lld", &M);
                 M = desencriptar_RSA(Apvt, M);
-                printf("\tLogo, a mensagem desencriptada eh: %lld\n", M);
+                printf("\tLogo, a mensagem desencriptada eh: %lld\n\n", M);
                 break;
             default:
                 if (op != 0) printf("Operacao invalida!\n");

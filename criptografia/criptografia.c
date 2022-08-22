@@ -254,8 +254,8 @@ lli tcr(lli a1, lli a2, lli p, lli q) {
     tabela_tcr[0][0] = a1; // armazenando a1 
     tabela_tcr[0][1] = a2; // armazenando a2
 
-    tabela_tcr[1][1] = p; // armazenando m1
-    tabela_tcr[1][2] = q; // armazenando m2
+    tabela_tcr[1][0] = p; // armazenando m1
+    tabela_tcr[1][1] = q; // armazenando m2
     
     // Para saber se tem solução, precisamos saber se o mdc entre
     // todos os números é 1, ou seja, se são primos entre si.
@@ -281,11 +281,13 @@ lli tcr(lli a1, lli a2, lli p, lli q) {
     lli t; // variável que armazena o t de euclides estendido (mi,xi)
     
     for (i = 0; i < s; i++) { // calculando yi, o inverso de xi em Zmi
+        printf("\n\tEncontrando y%i:\n", i+1);
         t = t_euclides_estendido(tabela_tcr[1][i],tabela_tcr[3][i]); // t de euclides estendido
         // printf("t de m%d,x%d: %ld\n", i, i, t);
         tabela_tcr[4][i] = num_inverso(tabela_tcr[1][i],t); // número inverso de xi em Zmi
         // printf("y%d: %ld\n",i,tabela_tcr[4][i]);
     }
+    printf("\n");
     for (i = 0; i < s; i++) { // calculando ai*Mi*yi
         tabela_tcr[5][i] = tabela_tcr[0][i]*tabela_tcr[2][i]*tabela_tcr[4][i];
     }
@@ -304,31 +306,33 @@ lli tcr(lli a1, lli a2, lli p, lli q) {
 
 void print_TCR(lli tabela_tcr[7][2], int s, lli x) {
     int i;
-    printf("i              |");
+    printf("\tTCR:\n");
+    printf("\t|i              |");
     for (i = 0; i < s; i++) printf("%10d|", i);
     printf("\n");
-    printf("ai             |");
+    printf("\t|ai             |");
     for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[0][i]);
     printf("\n");
-    printf("mi             |");
+    printf("\t|mi             |");
     for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[1][i]);
     printf("\n");
-    printf("Mi = m/mi      |");
+    printf("\t|Mi = m/mi      |");
     for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[2][i]);
     printf("\n");
-    printf("xi = Mi mod mi |");
+    printf("\t|xi = Mi mod mi |");
     for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[3][i]);
     printf("\n");
-    printf("yi = (xi)-¹    |");
+    printf("\t|yi = (xi)-¹    |");
     for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[4][i]);
     printf("\n");
-    printf("ai*Mi*yi       |");
+    printf("\t|ai*Mi*yi       |");
     for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[5][i]);
     printf("\n");
-    printf("ai*Mi*yi mod m |");
+    printf("\t|ai*Mi*yi mod m |");
     for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[6][i]);
     printf("\n");
-    printf("x0             |%10lld|",x);
+    printf("\t|x0             |%10lld|",x);
+    printf("\n\n");
 }
 
 lli maior_numero (lli n1, lli n2) { // maior número entre dois números
