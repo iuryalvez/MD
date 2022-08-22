@@ -53,8 +53,34 @@ gcc teoria-dos-numeros.c main.c -o teoria-dos-numeros.exe
 
 ### Funções
   1. **Descobrindo chave pública (RSA)**
+  
+      Dado uma chave privada (p,q,d), podemos descobrir sua chave pública (n,e) já que:
+      * n = p*q;
+      * phi(n) = (p-1)*(q-1);
+      * d-¹ = e em Zphi(n);
+
   2. **Descobrindo chave privada (RSA)**
 
+      Dado uma chave pública (n,e), podemos descobrir sua chave privada (p,q,d) com um processo intuitivo a partir de 1), temos que encontrar um número 'p' que divide 'n'. Encontrado p, q é o resultado da divisão de 'n' por 'p'.
+      
+      Com 'p' e 'q' podemos calcular calcular d, tendo em vista que d = e-¹ em Zphi(n).
+      
+  3. **Encriptar mensagem (RSA)**
+  
+      Função de codificação: E(M) = M^e mod n.
+  
+      Digamos que você queira encriptar uma mensagem para seu amigo Beto, para isso, deve-se ter a chave pública dele e encriptar a mensagem em cima disso. 
+      
+      Para M = 19, n = 973, e = 445. Deve-se resolver a potência: 19^445 mod 973.
+      
+  4. **Desencriptar mensagem (RSA)**
+  
+      Função de decodificação: D(N) = N^d mod n.
+      
+      Digamos que você queira desencriptar uma mensagem que sua amiga Ana lhe enviou, com posse de sua chave privada (p,q,d), você resolve a função de decodificação.  
+      
+      Para N = 649, p = 7, q = 139, d = 601. Deve-se resolver a potência: 649^601 mod 973.
+  
 ### Compilando e executando:
 
   Utilizando o gcc dentro da pasta de criptografia:
