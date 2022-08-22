@@ -133,3 +133,11 @@ lli multiplicacoes_modulares(lli n, lli e, lli *resultados, lli m);
  * @param m mensagem (M^e)
  */
 void print_potencias_validas(public_key A, lli m);
+
+lli tcr(lli a1, lli a2, lli p, lli q);
+
+void print_TCR(lli tabela_tcr[7][2], int s, lli x);
+
+lli maior_numero (lli n1, lli n2);
+
+lli mdc_dois_numeros(lli n1, lli n2);

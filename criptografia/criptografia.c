@@ -172,8 +172,8 @@ lli multiplicacoes_modulares(lli n, lli e, lli *resultados, lli m) {
 }
 
 lli encriptar_RSA(public_key A, lli m) {
-    lli *resultados; // vetor de resultados
-    lli maior_pot = 1; // potência de dois mais próxima do expoente temporário, também é o tamanho do nosso vetor de resultados
+    lli *resultados = NULL; // vetor de resultados
+    lli maior_pot = 1; // potência de dois mais próxima do expoente da chave pública, também é o tamanho do nosso vetor de resultados
     lli res;
 
     printf("\tPrecisamos calcular E(M) = M^e mod n\n"); // fórmula de encriptação
@@ -219,7 +219,133 @@ lli desencriptar_RSA (private_key Apvt, lli N) {
     lli v2 = multiplicacoes_modulares(Apvt.q,e2,r2,n2); // retornar o valor das mult.
 
     printf("\tAgora precisamos resolver o sistema de equacoes lineares modulares:\n");
-    // continuar com TCR...
+    
+    msg = tcr(v1, v2, Apvt.p, Apvt.q); // retorna o valor calculado no TCR
 
     return msg;
+}
+
+lli tcr(lli a1, lli a2, lli p, lli q) {
+    int s = 2; // s = número de sistemas
+    int i, j; // i,j são variáveis auxiliares
+    
+    /*
+    uma matriz que armazena os números de cada sistema 
+    1. tabela_tcr[0][i] = ai;
+    2. tabela_tcr[1][i] = mi;
+    3. tabela_tcr[2][i] = Mi;
+    4. tabela_tcr[3][i] = xi;
+    5. tabela_tcr[4][i] = yi = inverso de xi;
+    6. tabela_tcr[5][i] = ai*Mi*yi;
+    7. tabela_tcr[6][i] = (ai*Mi*yi) mod m;
+    8. tabela_tcr[7][i] = + modular;
+    */
+   
+    lli tabela_tcr[7][2];
+    lli m = p*q; // número que armazena o m (m1*m2*m3*...*mi)
+    
+    /* 
+     * 1. Mi = (m/mi);
+     * 2. xi = Mi mod mi;
+     * 3. yi = o inverso de xi em Zmi;
+     * 4. solução de x = somatório de i = 1 indo até um número t calculando (ai * Mi * yi) mod m.
+    */
+
+    tabela_tcr[0][0] = a1; // armazenando a1 
+    tabela_tcr[0][1] = a2; // armazenando a2
+
+    tabela_tcr[1][1] = p; // armazenando m1
+    tabela_tcr[1][2] = q; // armazenando m2
+    
+    // Para saber se tem solução, precisamos saber se o mdc entre
+    // todos os números é 1, ou seja, se são primos entre si.
+    
+    for (i = 0; i < s; i++) {
+        for (j = i+1; j < s; j++) {
+            if (mdc_dois_numeros(tabela_tcr[1][i],tabela_tcr[1][j]) != 1) {
+                printf("Os mi's não são primos entre si, o sistema não possui soluções\n");
+                return FALSE;
+            }
+        }
+    }
+    // printf("m: %ld\n", m);
+    for (i = 0; i < s; i++) { // calculando Mi (Mi = m/mi)
+        tabela_tcr[2][i] = m/(double)tabela_tcr[1][i]; 
+        // printf("M%i = %ld/%ld\n", i, m, tabela_tcr[2][i]); 
+    }
+    for (i = 0; i < s; i++) { // calculando xi
+        tabela_tcr[3][i] = tabela_tcr[2][i] % tabela_tcr[1][i];
+        // printf("x%d = %ld\n", i, tabela_tcr[3][i]);
+    }
+
+    lli t; // variável que armazena o t de euclides estendido (mi,xi)
+    
+    for (i = 0; i < s; i++) { // calculando yi, o inverso de xi em Zmi
+        t = t_euclides_estendido(tabela_tcr[1][i],tabela_tcr[3][i]); // t de euclides estendido
+        // printf("t de m%d,x%d: %ld\n", i, i, t);
+        tabela_tcr[4][i] = num_inverso(tabela_tcr[1][i],t); // número inverso de xi em Zmi
+        // printf("y%d: %ld\n",i,tabela_tcr[4][i]);
+    }
+    for (i = 0; i < s; i++) { // calculando ai*Mi*yi
+        tabela_tcr[5][i] = tabela_tcr[0][i]*tabela_tcr[2][i]*tabela_tcr[4][i];
+    }
+    for (i = 0; i < s; i++) { // calculando (ai*Mi*yi) mod m
+        tabela_tcr[6][i] = tabela_tcr[5][i] % m;
+        if (tabela_tcr[6][i] < 0) tabela_tcr[6][i] += m;
+    }
+
+    lli x = 0; // a solução do sistema
+    
+    for (i = 0; i < s; i++) x = (x + tabela_tcr[6][i]) % m;
+    
+    print_TCR(tabela_tcr,s,x);
+    return x;    
+}
+
+void print_TCR(lli tabela_tcr[7][2], int s, lli x) {
+    int i;
+    printf("i              |");
+    for (i = 0; i < s; i++) printf("%10d|", i);
+    printf("\n");
+    printf("ai             |");
+    for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[0][i]);
+    printf("\n");
+    printf("mi             |");
+    for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[1][i]);
+    printf("\n");
+    printf("Mi = m/mi      |");
+    for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[2][i]);
+    printf("\n");
+    printf("xi = Mi mod mi |");
+    for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[3][i]);
+    printf("\n");
+    printf("yi = (xi)-¹    |");
+    for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[4][i]);
+    printf("\n");
+    printf("ai*Mi*yi       |");
+    for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[5][i]);
+    printf("\n");
+    printf("ai*Mi*yi mod m |");
+    for (i = 0; i < s; i++) printf("%10lld|", tabela_tcr[6][i]);
+    printf("\n");
+    printf("x0             |%10lld|",x);
+}
+
+lli maior_numero (lli n1, lli n2) { // maior número entre dois números
+    lli maior = (n1 > n2) ? n1 : n2;
+    return maior;
+}
+
+lli mdc_dois_numeros(lli n1, lli n2) {
+    lli i, mdc;
+    lli maior;
+    // if (num_primo(n1) == TRUE) {
+    //     printf("O primeiro número é primo.\n");
+    //     if (num_primo(n2) == TRUE) printf("O segundo número é primo.\n");    
+    //     return FALSE;
+    // }
+    // if (num_primo(n2) == TRUE) printf("O segundo número é primo.\n"); // i deve ser diferente de n1 e n2 pq não sabemos se um dos dois números é fator do outro
+    maior = maior_numero(n1,n2);
+    for (i = 1; i <= maior/2; i++) if (n1 % i == 0 && n2 % i == 0 && (i != n1 || i != n2)) mdc = i; // verificação simultânea dos divisores, vai atualizar sempre que encontrar um número que divide os dois
+    return mdc;
 }
