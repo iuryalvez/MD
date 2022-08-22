@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define TRUE 1
-#define FALSE -1
+#define FALSE 0
 
 // facilitar visualização
 typedef long long int lli;
@@ -100,7 +100,7 @@ lli encriptar_RSA(public_key A, lli m);
  * @brief função que desencripta a mensagem m com chave privada Apvt
  * 
  * @param Apvt chave privada
- * @param m mensagem encriptada
+ * @param N mensagem encriptada
  * @return lli mensagem desencriptada
  */
 lli desencriptar_RSA (private_key Apvt, lli N);
@@ -134,10 +134,38 @@ lli multiplicacoes_modulares(lli n, lli e, lli *resultados, lli m);
  */
 void print_potencias_validas(public_key A, lli m);
 
+/**
+ * @brief Utiliza o teorema do resto chinês para calcular o resultado de um sistema de equações modulares
+ * 
+ * @param a1 O valor encontrado pelas multiplicações modulares com o 'p'
+ * @param a2 O valor encontrado pelas multiplicações modulares com o 'q'
+ * @param p Número 'p' da chave privada
+ * @param q Número 'q' da chave privada
+ * @return O resultado do sistema calculado pelo TCR
+ */
 lli tcr(lli a1, lli a2, lli p, lli q);
 
-void print_TCR(lli tabela_tcr[7][2], int s, lli x);
+/**
+ * @brief Imprime a tabela do teorema chinês do resto, na forma de uma matriz 7x2
+ * 
+ * @param x O resultado do sistema
+ */
+void print_TCR(lli tabela_tcr[7][2], lli x);
 
+/**
+ * @brief Retorna o maior entre dois números
+ * 
+ * @param n1 Primeiro número a ser comparado
+ * @param n2 Segundo número a ser comparado
+ * @return O maior entre n1 e n2
+ */
 lli maior_numero (lli n1, lli n2);
 
+/**
+ * @brief Encontra e retorna o máximo divisor comum entre dois números
+ * 
+ * @param n1 Primeiro número
+ * @param n2 Segundo número
+ * @return O m.d.c. entre n1 e n2
+ */
 lli mdc_dois_numeros(lli n1, lli n2);

@@ -28,6 +28,10 @@ int main() {
                 printf("\nRSA - Descobrir chave publica\n");
                 printf("Chave privada de 'A': (p,q,d)\n"); // ler 3 números seguidos
                 scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
+                while (num_primo(Apvt.p)==FALSE || num_primo(Apvt.q)==FALSE){ //Verifica se os numeros p e q inseridos são primos
+                    printf("Os numeros da chave privada precisam ser primos!\n");
+                    scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
+                }
                 A = chave_publica(Apvt);
                 printf("\tO inverso de 'd' eh '%lld' que eh o 'e' que queriamos.\n", A.e);
                 printf("\tA chave publica de 'A' eh = (n,e) = (%lld,%lld)\n\n", A.n, A.e);
