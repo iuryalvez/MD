@@ -3,11 +3,6 @@
 /*
 gcc criptografia.c main.c -o criptografia.exe -lm
 ./criptografia.exe
-
-
-37 43 445
-2491 255
-1492
 */
 
 int main() {
@@ -46,12 +41,27 @@ int main() {
                 break;
             case 3:
                 printf("\nRSA - Encriptar mensagem de 'A' para 'B'\n");
-                printf("Chave publica de 'B': (n,e)\n");
+                printf("Chave publica de 'B' para encriptarmos: (n,e)\n");
                 scanf("%lld %lld", &B.n, &B.e);
                 printf("Informe a mensagem que sera encriptada: (M)\n");
                 scanf("%lld", &M);
                 printf("\n\tUsando (n,e) = (%lld,%lld) para encriptar %lld:\n", B.n, B.e, M);
                 M = encriptar_RSA(B, M);
+                printf("A mensagem sera assinada?\n");
+                while (1) {
+                    printf("1 - Sim\n2 - Nao\n");
+                    scanf("%d", &opc);
+                    if (opc == 1 || opc == 2) break;
+                    printf("Opcao invalida!\n");
+                }
+                if (opc == 1) {
+                    printf("Para assinar M, precisamos desencriptar M (ja encriptado para 'B')\n");
+                    printf("Chave privada de 'A': (p,q,d)\n");
+                    scanf("%lld %lld %lld", &Bpvt.p, &Bpvt.q, &Bpvt.d);
+                    M = desencriptar_RSA(Bpvt, M);
+                    printf("\tN = Da(Eb(M))\n");
+                    printf("\tA mensagem assinada de 'A' para 'B' eh: %lld\n", M);
+                }
                 printf("\tA mensagem encriptada de 'A' para 'B' eh: %lld\n\n", M);
                 break;
             case 4:
@@ -60,6 +70,22 @@ int main() {
                 scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
                 printf("Mensagem que sera desencriptada:\n");
                 scanf("%lld", &M);
+                printf("A mensagem foi assinada?\n");
+                while (1) {
+                    printf("1 - Sim\n2 - Nao\n");
+                    scanf("%d", &opc);
+                    if (opc == 1 || opc == 2) break;
+                    printf("Opcao invalida!\n");
+                }
+                if (opc == 1) {
+                    printf("Ja que a mensagem foi assinada, ela foi desencriptada com a chave privada de 'B'\n");
+                    printf("Encriptaremos ela com a chave publica de 'B' para voltar a mensagem encriptada original\n");
+                    printf("Chave publica de 'B' (n,e):\n");
+                    scanf("%lld %lld", &B.n, &B.e);
+                    printf("\tN = Db(Ea(M))\n");
+                    M = encriptar_RSA(B, M);
+                    printf("\tA mensagem que precisamos desencriptar eh: %lld\n", M);
+                }
                 M = desencriptar_RSA(Apvt, M);
                 printf("\tLogo, a mensagem desencriptada eh: %lld\n\n", M);
                 break;

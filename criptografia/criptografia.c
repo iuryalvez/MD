@@ -138,11 +138,11 @@ void print_potencias_validas(public_key A, lli m) {
     while(e_limite>1){
         i = 1;
         i = maior_potencia(e_limite, i); // encontra a próxima maior potência de 2 antes do expoente atual
-        if (e_limite == A.e) printf("%lld^%.0lf", m, pow(2,i)); // se for o primeiro, printamos sem o ⊗
-        else printf("⊗ %lld^%.0lf", m, pow(2,i));
+        if (e_limite == A.e) printf("%lld^%.0lf", m, pow(2,i)); // se for o primeiro, printamos sem o  ⊗
+        else printf(" ⊗ %lld^%.0lf", m, pow(2,i));
         e_limite = e_limite - pow(2, i); // ajusta o expoente ao próximo na lista de fatoração
     }
-    if(A.e % 2 != 0) printf("⊗ %lld^1", m);
+    if(A.e % 2 != 0) printf(" ⊗ %lld^1", m);
     printf("\n");
 }
 
@@ -158,13 +158,13 @@ lli multiplicacoes_modulares(lli n, lli e, lli *resultados, lli m) {
         i--; // o vetor é do tamanho da verdadeira maior potência, então para acessar a ultima posição devemos diminuir em 1
         // começamos a multiplicação dos valores válidos que deverão ser multiplicados para se ter m^e
         if (ant == 1) printf("%lld", resultados[i]); // se for o primeiro, printamos sem o ⊗
-        else printf("⊗ %lld", resultados[i]);
+        else printf(" ⊗ %lld", resultados[i]);
         ant = (ant * resultados[i]) % n; // ant recebe os valores acumulados dos resultados válidos
         // printf("ant = %lld\n", ant);
         e_limite = e_limite - pow(2, i+1); // ajusta o expoente ao próximo na lista de fatoração, +1 porque diminuímos 1 antes
     }
     if(e % 2 != 0) { // se for ímpar, devemos executar o caso de multiplicar por M^1
-        printf("⊗ %lld", m);
+        printf(" ⊗ %lld", m);
         ant = (ant*m) % n;
     }
     printf("\n\t%lld^%lld = %lld\n\n", m, e, ant); // valor das multiplicações
