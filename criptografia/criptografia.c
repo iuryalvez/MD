@@ -193,32 +193,40 @@ lli encriptar_RSA(public_key A, lli m) {
 lli desencriptar_RSA (private_key Apvt, lli N) {
     
     lli n = Apvt.p * Apvt.q;
+    public_key tmp;
     lli msg;
 
     printf("\n\tD(N) = N^d mod n, ou seja -> D(%lld) = %lld^%lld mod %lld\n", N, N, Apvt.d, n);
-    printf("\tDevemos calcular\n");
-    printf("\t1 - (N mod p)^(d mod p-1) mod p -> (%lld mod %lld)^(%lld mod %lld) mod %lld\n", N, Apvt.p, Apvt.d, Apvt.p-1, Apvt.p);
-    printf("\t2 - (N mod q)^(d mod q-1) mod q -> (%lld mod %lld)^(%lld mod %lld) mod %lld\n", N, Apvt.q, Apvt.d, Apvt.q-1, Apvt.q);
+    printf("\n\tDevemos calcular dois valores (x1,x2):\n");
+    printf("\tx1 = (N mod p)^(d mod p-1) mod p -> (%lld mod %lld)^(%lld mod %lld) mod %lld\n", N, Apvt.p, Apvt.d, Apvt.p-1, Apvt.p);
+    printf("\tx2 = (N mod q)^(d mod q-1) mod q -> (%lld mod %lld)^(%lld mod %lld) mod %lld\n", N, Apvt.q, Apvt.d, Apvt.q-1, Apvt.q);
     
     lli n1 = N % Apvt.p; // n da equação 1
     lli e1 = Apvt.d % (Apvt.p-1); // expoente da equação 1
     lli n2 = N % Apvt.q; // n da equacao 2
     lli e2 = Apvt.d % (Apvt.q-1);  // expoente da equação 2
 
-    printf("\tResolvendo os mod...\n");
-    printf("\t1 - (%lld)^%lld mod %lld\n", n1, e1, Apvt.p);
-    printf("\t2 - (%lld)^%lld mod %lld\n", n2, e2, Apvt.q);
-    printf("\tAgora precisamos calcular o valor dessas potências\n");
+    printf("\n\tResolvendo os mod...\n");
+    printf("\tx1 = (%lld)^%lld mod %lld\n", n1, e1, Apvt.p);
+    printf("\tx2 = (%lld)^%lld mod %lld\n", n2, e2, Apvt.q);
+    printf("\n\tAgora precisamos calcular o valor das potencias de x1 e x2:\n");
     
-    printf("\tPara equacao 1:\n");
+
+    printf("\n\tx1:\n");
+    tmp.n = Apvt.p;
+    tmp.e = e1;
+    print_potencias_validas(tmp,n1);
     lli *r1 = resultados_N(Apvt.p,maior_potencia(e1,1),n1); // vetor de resultados de 1
     lli v1 = multiplicacoes_modulares(Apvt.p,e1,r1,n1); // retornar o valor das mult.
 
-    printf("\tPara equacao 2:\n");
+    printf("\tx2:\n");
+    tmp.n = Apvt.q;
+    tmp.e = e2;
+    print_potencias_validas(tmp,n2);
     lli *r2 = resultados_N(Apvt.q,maior_potencia(e2,1),n2); // vetor de resultados de 2
     lli v2 = multiplicacoes_modulares(Apvt.q,e2,r2,n2); // retornar o valor das mult.
 
-    printf("\tAgora precisamos resolver o sistema de equacoes lineares modulares:\n");
+    printf("\tAgora precisamos resolver o sistema de equacoes lineares modulares (TCR) com a1 = x1 e a2 = x2:\n");
     
     msg = tcr(v1, v2, Apvt.p, Apvt.q); // retorna o valor calculado no TCR
 
@@ -338,9 +346,11 @@ lli maior_numero (lli n1, lli n2) { // maior número entre dois números
 }
 
 lli mdc_dois_numeros(lli n1, lli n2) {
-    lli i, mdc;
-    lli maior;
-    maior = maior_numero(n1,n2);
-    for (i = 1; i <= maior/2; i++) if (n1 % i == 0 && n2 % i == 0 && (i != n1 || i != n2)) mdc = i; // verificação simultânea dos divisores, vai atualizar sempre que encontrar um número que divide os dois
-    return mdc;
+    if (n2 > n1) {
+        lli temp = n1;
+        n1 = n2;
+        n2 = temp;
+    }
+    if (n2 == 0) return n1;
+    else return mdc_dois_numeros(n2, n1 % n2);
 }

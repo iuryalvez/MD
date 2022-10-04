@@ -40,8 +40,8 @@ int main() {
                 printf("\tA chave privada de 'B' eh = (p,q,d) = (%lld,%lld,%lld)\n\n", Bpvt.p, Bpvt.q, Bpvt.d);
                 break;
             case 3:
-                printf("\nRSA - Encriptar mensagem de 'A' para 'B'\n");
-                printf("Chave publica de 'B' para encriptarmos: (n,e)\n");
+                printf("\nRSA - Encriptar mensagem\n");
+                printf("Chave publica do destinatario para encriptarmos: (n,e)\n");
                 scanf("%lld %lld", &B.n, &B.e);
                 printf("Informe a mensagem que sera encriptada: (M)\n");
                 scanf("%lld", &M);
@@ -53,20 +53,20 @@ int main() {
                     printf("Opcao invalida!\n");
                 }
                 if (opc == 1) {
-                    printf("Para assinar M, precisamos desencriptar M antes de encriptar para 'B'\n");
-                    printf("Chave privada de 'A': (p,q,d)\n");
+                    printf("Para assinar M, precisamos desencriptar M antes de encriptar para o destinatario\n");
+                    printf("Chave privada do remetente: (p,q,d)\n");
                     scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
                     M = desencriptar_RSA(Apvt, M);
-                    printf("\tN = Da(Eb(M))\n");
-                    printf("\tA mensagem assinada de 'A' para 'B' eh: %lld\n", M);
+                    printf("\tN = D(E(M))\n");
+                    printf("\tA mensagem assinada eh: %lld\n", M);
                 }
                 printf("\n\tUsando (n,e) = (%lld,%lld) para encriptar %lld:\n", B.n, B.e, M);
                 M = encriptar_RSA(B, M);
-                printf("\tA mensagem encriptada de 'A' para 'B' eh: %lld\n\n", M);
+                printf("\tA mensagem encriptada eh: %lld\n\n", M);
                 break;
             case 4:
-                printf("\nRSA - Desencriptar mensagem de 'B' para 'A'\n");
-                printf("Chave privada de 'A': (p,q,d)\n");
+                printf("\nRSA - Desencriptar mensagem\n");
+                printf("Chave privada do destinatario: (p,q,d)\n");
                 scanf("%lld %lld %lld", &Apvt.p, &Apvt.q, &Apvt.d);
                 printf("Mensagem que sera desencriptada:\n");
                 scanf("%lld", &M);
@@ -79,11 +79,11 @@ int main() {
                 }
                 M = desencriptar_RSA(Apvt, M);
                 if (opc == 1) {
-                    printf("Ja que a mensagem foi assinada, ela foi desencriptada com a chave privada de 'B'\n");
-                    printf("Encriptaremos ela com a chave publica de 'B' para voltar a mensagem original\n");
-                    printf("Chave publica de 'B' (n,e):\n");
+                    printf("Ja que a mensagem foi assinada, ela foi desencriptada com a chave privada do remetente\n");
+                    printf("Encriptaremos ela com a chave publica do remetente para voltar a mensagem original encriptada\n");
+                    printf("Chave publica do remetente (n,e):\n");
                     scanf("%lld %lld", &B.n, &B.e);
-                    printf("\tN = Db(Ea(M))\n");
+                    printf("\tN = D(E(M))\n");
                     M = encriptar_RSA(B, M);
                     printf("\tA mensagem que precisamos desencriptar eh: %lld\n", M);
                 }
