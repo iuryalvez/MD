@@ -23,7 +23,7 @@ int main () {
                 printf("Insira o número limite do crivo: ");
                 while(n <= 1) { // ler enquanto nao inserir numero valido
                     scanf("%ld", &n);
-                    if (n <= 1) printf("Por favor, insira um número válido (> 1)\n");
+                    if (n <= 1) printf("\tPor favor, insira um número válido (> 1)\n");
                 }                
                 crivo_de_eratostenes(n);
                 new_line();
@@ -49,7 +49,7 @@ int main () {
                 printf("----- MAIOR DIVISOR COMUM ENTRE DOIS NÚMEROS -----\n");
                 for (i = 0; i < 2; i++) {
                     while (nums[i] < 2 || num_primo(nums[i])) {
-                        printf("Insira o %iº número para ser calculado o mdc: ", i);
+                        printf("Insira o %iº número para ser calculado o mdc: ", i+1);
                         scanf("%ld", &nums[i]);
                         if (nums[i] < 1) {
                             printf("Insira um número válido (> 0)\n");
@@ -119,7 +119,7 @@ int main () {
                 break;
             case 7:
                 new_line();
-                printf("----- EQUAÇÕES LINEARES MODULARES (\"a⊗ x = b em Zn\") -----\n");
+                printf("----- EQUAÇÕES LINEARES MODULARES (\"a ⊗ x = b em Zn\") -----\n");
                 equacoes_lineares();
                 new_line();
                 break;

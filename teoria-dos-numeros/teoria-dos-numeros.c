@@ -46,18 +46,14 @@ long int num_primo(long int n) {
     else return FALSE;
 }
 
-long int mdc_dois_numeros(long int n1, long int n2) {
-    long int i, mdc;
-    long int maior;
-    // if (num_primo(n1) == TRUE) {
-    //     printf("O primeiro número é primo.\n");
-    //     if (num_primo(n2) == TRUE) printf("O segundo número é primo.\n");    
-    //     return FALSE;
-    // }
-    // if (num_primo(n2) == TRUE) printf("O segundo número é primo.\n"); // i deve ser diferente de n1 e n2 pq não sabemos se um dos dois números é fator do outro
-    maior = maior_numero(n1,n2);
-    for (i = 1; i <= maior/2; i++) if (n1 % i == 0 && n2 % i == 0 && (i != n1 || i != n2)) mdc = i; // verificação simultânea dos divisores, vai atualizar sempre que encontrar um número que divide os dois
-    return mdc;
+long int mdc_dois_numeros(long int n1, long int n2) { // euclides recursivo
+    if (n1 < n2) {
+        long int temp = n1;
+        n1 = n2;
+        n2 = temp;
+    }
+    if (n2 == 0) return n1;
+    else return mdc_dois_numeros(n2, n1 % n2);
 }
 
 long int MD(long int n) {
