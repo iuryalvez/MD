@@ -1,5 +1,5 @@
 # UFG-MD
-Repositório para códigos relacionados à disciplina de Matemática Discreta.
+Repositório para códigos relacionados à disciplina de Matemática Discreta do curso de Ciência da Computação da UFG.
 
 ## Teoria dos Números
 
